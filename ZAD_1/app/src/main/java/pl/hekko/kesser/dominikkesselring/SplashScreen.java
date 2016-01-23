@@ -10,11 +10,9 @@ import android.support.v7.app.AppCompatActivity;
  */
 public class SplashScreen extends AppCompatActivity {
 
-
     private static final int SPLASH_TIME = 5000;
     private Handler handler;
     private Runnable runnable;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,20 +22,21 @@ public class SplashScreen extends AppCompatActivity {
         startIntentAfterPeriodTime();
     }
 
-
-
     private void startIntentAfterPeriodTime() {
-
         handler = new Handler();
-        runnable = new Runnable() {
+        runnable = new MyRunnable();
 
-            public void run() {
-
-                startActivity(new Intent(SplashScreen.this, MainActivity.class));
-                finish();
-            }
-        };
         handler.postDelayed(runnable, SPLASH_TIME);
+    }
+
+
+    private class MyRunnable implements Runnable {
+        @Override
+        public void run() {
+
+            startActivity(new Intent(SplashScreen.this, MainActivity.class));
+            finish();
+        }
     }
 
 
@@ -46,7 +45,20 @@ public class SplashScreen extends AppCompatActivity {
         super.onBackPressed();
         handler.removeCallbacks(runnable);
     }
+    @Override
+    public void onPause(){
+        handler.removeCallbacks(runnable);
+        super.onPause();
+    }
+    @Override
+    public void onResume(){
+        super.onResume();
+        handler.postDelayed(runnable, SPLASH_TIME);
+
+    }
 }
+
+
 
 
 
