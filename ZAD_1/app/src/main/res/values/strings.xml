@@ -1,5 +1,10 @@
 <resources>
     <string name="app_name">Dominik.Kesselring</string>
-    <string name="other_option">other option</string>
+    <string name="logout_button">Wyloguj</string>
     <string name="descImageView">Working</string>
+    <string name="log_in_mail">mail@domain.com</string>
+    <string name="log_in_password">password</string>
+    <string name="log_in_button">Zaloguj się</string>
+    <string name="text_view_user">Mail:</string>
+    <string name="text_view_password">Hasło:</string>
 </resources>

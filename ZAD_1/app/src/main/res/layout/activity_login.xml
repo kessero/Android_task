@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="pl.hekko.kesser.dominikkesselring.MainActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/text_view_password"
+        android:id="@+id/textViewPassword"
+        android:textColor="#ffffff"
+        android:layout_below="@+id/loginMail"
+        android:layout_marginTop="10dp"
+        android:layout_alignLeft="@+id/textViewUser"
+        android:layout_marginBottom="10dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/text_view_user"
+        android:id="@+id/textViewUser"
+        android:layout_marginRight="10dp"
+        android:textColor="#ffffff"
+        android:layout_marginTop="100dp"
+        android:layout_alignParentTop="false"
+        android:layout_marginBottom="10dp" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/log_in_mail"
+        android:id="@+id/loginMail"
+        android:layout_alignParentTop="false"
+        android:background="#ffffff"
+        android:inputType="textEmailAddress"
+        android:padding="2dp"
+        android:textColorHint="#dfdfdf"
+        android:layout_below="@+id/textViewUser"
+        android:layout_alignLeft="@+id/textViewUser" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/loginPassword"
+        android:background="#ffffff"
+        android:hint="@string/log_in_password"
+        android:textColorHint="#dfdfdf"
+        android:layout_below="@+id/textViewPassword"
+        android:layout_alignLeft="@+id/textViewPassword"
+        android:inputType="textPassword" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/log_in_button"
+        android:id="@+id/buttonLogIn"
+        android:layout_alignParentBottom="false"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="20dp"
+        android:layout_below="@+id/loginPassword" />
+</RelativeLayout>
