@@ -1,5 +1,6 @@
 package pl.hekko.kesser.dominikkesselring;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -11,24 +12,27 @@ import android.support.v7.app.AppCompatActivity;
  */
 public class SplashScreen extends AppCompatActivity {
 
+    private static final String LOGIN_KEY = "login";
+    private static final String PREFS_F = "MyPrefs";
     private static final int SPLASH_TIME = 5000;
-    private static final int PREFERENCE_MODE_PRIVATE = 1;
-    private Handler handler;
-    private Runnable runnable;
+    private static Handler handler;
+    private static Runnable runnable;
     private boolean isLogin;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("MyPrefs", PREFERENCE_MODE_PRIVATE);
-        isLogin = sharedPreferences.getBoolean("login", false);
+        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences(PREFS_F, Context.MODE_PRIVATE);
+        isLogin = sharedPreferences.getBoolean(LOGIN_KEY, false);
         startIntentAfterPeriodTime();
     }
 
     private void startIntentAfterPeriodTime() {
         handler = new Handler();
+        //TODO Weak/reference
         runnable = new MyRunnable();
 
         handler.postDelayed(runnable, SPLASH_TIME);
@@ -52,7 +56,6 @@ public class SplashScreen extends AppCompatActivity {
         handler.postDelayed(runnable, SPLASH_TIME);
 
     }
-
 
     private class MyRunnable implements Runnable {
         @Override

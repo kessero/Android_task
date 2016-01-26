@@ -2,6 +2,7 @@ package pl.hekko.kesser.dominikkesselring;/*
  * Created by kesser on 23.01.16.
  */
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -17,9 +18,8 @@ public class LoginScreen extends AppCompatActivity {
 
     private static final String EMAIL_PATTERN = "^[a-zA-Z0-9#_~!$&'()*+,;=:.\"(),:;<>@\\[\\]\\\\]+@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*$";
     private static final String PASSWORD_PATTERN = "((?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,})";
-    private static final String ERROR_MAIL_FORMAT = "Błędny format Mail!";
-    private static final String ERROR_PASS_FORMAT = "Błędny format Hasło!";
-    private static final int PREFERENCE_MODE_PRIVATE = 1;
+    private static final String PREFS_F = "MyPrefs";
+    private static final String LOGIN_KEY = "login";
     private EditText loginMail;
     private EditText loginPassword;
     private Pattern patternMail;
@@ -43,9 +43,9 @@ public class LoginScreen extends AppCompatActivity {
                 String userMail = loginMail.getText().toString();
                 String userPassword = loginPassword.getText().toString();
                 if (validateEmail(userMail)) {
-                    loginMail.setError(ERROR_MAIL_FORMAT);
+                    loginMail.setError(getResources().getText(R.string.error_mail_format));
                 } else if (validatePassword(userPassword)) {
-                    loginPassword.setError(ERROR_PASS_FORMAT);
+                    loginPassword.setError(getResources().getText(R.string.error_password_format));
                 } else {
                     doLogin();
                 }
@@ -55,17 +55,17 @@ public class LoginScreen extends AppCompatActivity {
     }
 
     private void doLogin() {
-            saveLoginState();
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-            finish();
+        saveLoginState();
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 
     private void saveLoginState() {
-        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("MyPrefs", PREFERENCE_MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences(PREFS_F, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean("login", true);
+        editor.putBoolean(LOGIN_KEY, true);
         editor.apply();
     }
 

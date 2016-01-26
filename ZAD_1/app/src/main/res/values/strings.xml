@@ -7,4 +7,9 @@
     <string name="log_in_button">Zaloguj się</string>
     <string name="text_view_user">Mail:</string>
     <string name="text_view_password">Hasło:</string>
+    <string name="miniImage">mini Image</string>
+    <string name="error_mail_format">Błędny format Mail!</string>
+    <string name="error_password_format">Błędny format Hasło!</string>
+    <string name="error_get_data">Problem z pobraniem danych</string>
+    <string name="connect_to_internet">Check internet connection</string>
 </resources>
