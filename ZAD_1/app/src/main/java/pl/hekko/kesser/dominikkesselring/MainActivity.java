@@ -1,6 +1,8 @@
 package pl.hekko.kesser.dominikkesselring;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
@@ -57,8 +59,32 @@ public class MainActivity extends AppCompatActivity {
         dataList = new ArrayList<>();
         if (isConnectingToInternet()) {
             new GetJsonData().execute();
+        }else{
+            alertTurnOnWifi();
         }
 
+    }
+
+    private void alertTurnOnWifi() {
+        new AlertDialog.Builder(this)
+                .setMessage(getResources().getText(R.string.connect_to_internet))
+                .setTitle(getResources().getText(R.string.connect_to_internet_alert_title))
+                .setCancelable(false)
+                .setPositiveButton(android.R.string.ok,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                Intent settings = new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS);
+                                startActivity(settings);
+                            }
+                        })
+                .setNegativeButton(android.R.string.cancel,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                dialog.dismiss();
+                                finish();
+                            }
+                        })
+                .show();
     }
 
     private void backToLoginScreen() {
@@ -99,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
-        Toast.makeText(getApplicationContext(),this.getString(R.string.connect_to_internet),Toast.LENGTH_SHORT).show();
+       // Toast.makeText(getApplicationContext(),this.getString(R.string.connect_to_internet),Toast.LENGTH_SHORT).show();
         return false;
     }
 

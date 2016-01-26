@@ -11,5 +11,6 @@
     <string name="error_mail_format">Błędny format Mail!</string>
     <string name="error_password_format">Błędny format Hasło!</string>
     <string name="error_get_data">Problem z pobraniem danych</string>
-    <string name="connect_to_internet">Check internet connection</string>
+    <string name="connect_to_internet">Enable your network now?</string>
+    <string name="connect_to_internet_alert_title">No network connection!</string>
 </resources>
