@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -29,6 +28,7 @@ import java.util.HashMap;
 public class MainActivity extends AppCompatActivity {
 
     private final static String BASE_SERVER_URL = "http://www.kesser.hekko.pl/Prog/ZAD/";
+    private final String ERROR_GET_DATA_FROM_SERVER = "error";
     private final static String PREFS_F = "MyPrefs";
     private static final String TAG_ARRAY = "array";
     static final String TAG_TITLE = "title";
@@ -58,11 +58,34 @@ public class MainActivity extends AppCompatActivity {
         });
         dataList = new ArrayList<>();
         if (isConnectingToInternet()) {
-            new GetJsonData().execute();
+            dataFromServer();
+
         }else{
             alertTurnOnWifi();
         }
 
+    }
+
+    private void dataFromServer() {
+        GetJsonData getJsonData = new GetJsonData(MainActivity.this, BASE_SERVER_URL+PAGE_0,
+                new AsyncInterface() {
+                    @Override
+                    public void data(String jsonString) {
+                        if (jsonString.equals(ERROR_GET_DATA_FROM_SERVER)){
+                            Toast.makeText(getApplicationContext(), R.string.error_get_data, Toast.LENGTH_LONG).show();
+
+                        }else{
+                            dataList = ParseJSON(jsonString);
+                            progressBar.setVisibility(View.GONE);
+                            LazyAdapter adapter = new LazyAdapter(
+                                    MainActivity.this, dataList);
+
+                            list.setAdapter(adapter);
+                        }
+
+                    }
+                });
+        getJsonData.execute();
     }
 
     private void alertTurnOnWifi() {
@@ -148,46 +171,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private class GetJsonData extends AsyncTask<Void, Void, Boolean> {
 
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            try{
-                JsonRequest jsonRequest = new JsonRequest();
-                String url = BASE_SERVER_URL + PAGE_0;
-                String jsonResponse = jsonRequest.makeWebServiceCall(url, JsonRequest.GET);
-                Log.d("response: ", jsonResponse);
-                if (jsonResponse.equals(null)){
-                    return false;
-                }else {
-                    dataList = ParseJSON(jsonResponse);
-                    return true;
-                }
-            }catch (Exception e){
-                e.printStackTrace();
-                return false;
-            }
-
-
-        }
-
-        @Override
-        protected void onPostExecute(Boolean result) {
-            super.onPostExecute(result);
-            if(result) {
-                progressBar.setVisibility(View.GONE);
-                LazyAdapter adapter = new LazyAdapter(
-                        MainActivity.this, dataList);
-
-                list.setAdapter(adapter);
-            }else{
-                //TODO przydałby się jakiś refresh button w razie problemów z pobraniem danych resetujący AsyncTask
-                Toast.makeText(getApplicationContext(), getResources().getText(R.string.error_get_data), Toast.LENGTH_LONG).show();
-                progressBar.setVisibility(View.GONE);
-
-            }
-        }
-    }
 
     private ArrayList<HashMap<String, String>> ParseJSON(String jsonResponse) {
         if (jsonResponse != null) {
@@ -195,10 +179,10 @@ public class MainActivity extends AppCompatActivity {
 
                 JSONObject jsonObj = new JSONObject(jsonResponse);
 
-                JSONArray students = jsonObj.getJSONArray(TAG_ARRAY);
+                JSONArray dataItems = jsonObj.getJSONArray(TAG_ARRAY);
 
-                for (int i = 0; i < students.length(); i++) {
-                    JSONObject c = students.getJSONObject(i);
+                for (int i = 0; i < dataItems.length(); i++) {
+                    JSONObject c = dataItems.getJSONObject(i);
 
                     String title = c.getString(TAG_TITLE);
                     String desc = c.getString(TAG_DESC);
