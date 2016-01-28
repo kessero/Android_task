@@ -17,11 +17,9 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -35,9 +33,14 @@ public class MainActivity extends AppCompatActivity {
     static final String TAG_DESC = "desc";
     static final String TAG_URL = "url";
     private final static String PAGE_0 = "page_0.json";
+    private final static String PAGE = "page_";
+    private final static String PAGE_END_FILE = ".json";
+    private final static int MAX_PAGE_NUMBER = 2;
     private ProgressBar progressBar = null;
     private ArrayList<HashMap<String, String>> dataList;
     private ListView list;
+    private int licznik;
+    private LazyAdapter adapter;
 
 
     @Override
@@ -57,32 +60,51 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         dataList = new ArrayList<>();
+        adapter = new LazyAdapter(
+                MainActivity.this, dataList);
         if (isConnectingToInternet()) {
-            dataFromServer();
-
-        }else{
+            String url = BASE_SERVER_URL + PAGE_0;
+            dataFromServer(url);
+        } else {
             alertTurnOnWifi();
         }
+        list.setOnScrollListener(new EndlessScrollList() {
+            @Override
+            public boolean onLoadMore(int page, int totalItemsCount) {
+                if (licznik < MAX_PAGE_NUMBER) {
+                    progressBar.setVisibility(View.VISIBLE);
+                    licznik++;
+                    nextJsonDataGet(licznik);
+                }
+                return true;
+
+            }
+        });
 
     }
 
-    private void dataFromServer() {
-        GetJsonData getJsonData = new GetJsonData(MainActivity.this, BASE_SERVER_URL+PAGE_0,
+    private void nextJsonDataGet(int licznik) {
+        String pageNumber = Integer.toString(licznik);
+        String url = BASE_SERVER_URL + PAGE + pageNumber + PAGE_END_FILE;
+        dataFromServer(url);
+        adapter.notifyDataSetChanged();
+        progressBar.setVisibility(View.GONE);
+    }
+
+    private void dataFromServer(String url) {
+        GetJsonData getJsonData = new GetJsonData(MainActivity.this, url,
                 new AsyncInterface() {
+
                     @Override
                     public void data(String jsonString) {
                         if (jsonString.equals(ERROR_GET_DATA_FROM_SERVER)){
                             Toast.makeText(getApplicationContext(), R.string.error_get_data, Toast.LENGTH_LONG).show();
 
-                        }else{
+                        }else {
                             dataList = ParseJSON(jsonString);
                             progressBar.setVisibility(View.GONE);
-                            LazyAdapter adapter = new LazyAdapter(
-                                    MainActivity.this, dataList);
-
                             list.setAdapter(adapter);
                         }
-
                     }
                 });
         getJsonData.execute();
@@ -148,10 +170,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
-       // Toast.makeText(getApplicationContext(),this.getString(R.string.connect_to_internet),Toast.LENGTH_SHORT).show();
         return false;
     }
-
 
     @Override
     public void onBackPressed() {
@@ -170,8 +190,6 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
 
     }
-
-
 
     private ArrayList<HashMap<String, String>> ParseJSON(String jsonResponse) {
         if (jsonResponse != null) {

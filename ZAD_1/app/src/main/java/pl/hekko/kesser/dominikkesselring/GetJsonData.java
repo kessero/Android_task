@@ -9,7 +9,7 @@ import android.util.Log;
 class GetJsonData extends AsyncTask<Void, Void, String> {
 
     private final String ERROR_GET_DATA_FROM_SERVER = "error";
-    private Context context;
+    private final Context context;
     private final String url;
     private final AsyncInterface asyncInterface;
 
