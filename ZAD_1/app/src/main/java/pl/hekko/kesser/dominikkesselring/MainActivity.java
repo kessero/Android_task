@@ -11,15 +11,19 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
 import android.widget.Button;
+import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -38,16 +42,16 @@ public class MainActivity extends AppCompatActivity {
     private final static int MAX_PAGE_NUMBER = 2;
     private ProgressBar progressBar = null;
     private ArrayList<HashMap<String, String>> dataList;
-    private ListView list;
     private int licznik;
     private LazyAdapter adapter;
+    private GridView gridView;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        list = (ListView) findViewById(R.id.list);
+        setContentView(R.layout.activity_main_grid);
+        gridView = (GridView) findViewById(R.id.gridview);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         progressBar.setVisibility(View.VISIBLE);
         Button logOut = (Button) findViewById(R.id.buttonLogOut);
@@ -59,6 +63,12 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+        if(checkIsTablet()){
+            gridView.setNumColumns(4);
+        }else{
+            gridView.setNumColumns(2);
+        }
+
         dataList = new ArrayList<>();
         adapter = new LazyAdapter(
                 MainActivity.this, dataList);
@@ -68,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             alertTurnOnWifi();
         }
-        list.setOnScrollListener(new EndlessScrollList() {
+        gridView.setOnScrollListener(new EndlessScrollList() {
             @Override
             public boolean onLoadMore(int page, int totalItemsCount) {
                 if (licznik < MAX_PAGE_NUMBER) {
@@ -81,6 +91,21 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+    private boolean checkIsTablet() {
+        boolean isTablet = false;
+        Display display = getWindowManager().getDefaultDisplay();
+        DisplayMetrics metrics = new DisplayMetrics();
+        display.getMetrics(metrics);
+
+        float widthInches = metrics.widthPixels / metrics.xdpi;
+        float heightInches = metrics.heightPixels / metrics.ydpi;
+        double diagonalInches = Math.sqrt(Math.pow(widthInches, 2) + Math.pow(heightInches, 2));
+        if (diagonalInches >= 7.0) {
+            isTablet = true;
+        }
+
+        return isTablet;
     }
 
     private void nextJsonDataGet(int licznik) {
@@ -103,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
                         }else {
                             dataList = ParseJSON(jsonString);
                             progressBar.setVisibility(View.GONE);
-                            list.setAdapter(adapter);
+                            gridView.setAdapter(adapter);
                         }
                     }
                 });
